@@ -37,6 +37,7 @@ from trac.util.text import exception_to_unicode, obfuscate_email_address, \
                            shorten_line, text_width, wrap
 from trac.util.translation import _
 from trac.web.chrome import Chrome
+from trac.versioncontrol.diff import unified_diff
 
 
 class TicketNotificationSystem(Component):
@@ -573,14 +574,13 @@ class TicketNotifyEmail(NotifyEmail):
                     if field == 'description':
                         new_descr = wrap(new, self.COLS, ' ', ' ', '\n',
                                          self.ambiwidth)
-                        old_descr = wrap(old, self.COLS, '> ', '> ', '\n',
+                        old_descr = wrap(old, self.COLS, ' ', ' ', '\n',
                                          self.ambiwidth)
-                        old_descr = old_descr.replace(2 * '\n', '\n' + '>' +
-                                                      '\n')
+                        diff = unified_diff(old_descr.split('\n'), new_descr.split('\n'), context=0)
+
                         cdescr = '\n'
-                        cdescr += 'Old description:' + 2 * '\n' + old_descr + \
-                                  2 * '\n'
-                        cdescr += 'New description:' + 2 * '\n' + new_descr + \
+                        cdescr += '\n'.join(diff)
+                        cdescr += '\n\nNew description:' + 2 * '\n' + new_descr + \
                                   '\n'
                         changes_descr = cdescr
                     elif field == 'summary':
