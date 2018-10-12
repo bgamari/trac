@@ -455,6 +455,7 @@ def copytree(src, dst, symlinks=False, skip=[], overwrite=False):
     def copytree_rec(src, dst):
         names = os.listdir(src)
         makedirs(dst, overwrite=overwrite)
+        os.chmod(dst, 0733)
         errors = []
         for name in names:
             srcname = os.path.join(src, name)
